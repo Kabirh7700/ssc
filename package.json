@@ -1,0 +1,12 @@
+{
+  "name": "bonhoeffer-scm-dashboard-importmap",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "build": "echo 'Starting Bonhoeffer SCM Dashboard build...' && mkdir -p build_output && npx esbuild index.tsx --bundle --outfile=build_output/index.js --format=esm --jsx=automatic --platform=browser --loader:.ts=tsx --external:react --external:react-dom/* --external:react/* --external:@google/genai --external:recharts && cp index.html build_output/index.html && echo 'Build finished. Output in build_output directory.'",
+    "vercel-build": "npm run build"
+  },
+  "devDependencies": {
+    "esbuild": "^0.20.2"
+  }
+}

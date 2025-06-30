@@ -1,0 +1,162 @@
+
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/svg+xml" href="/vite.svg" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Bonhoeffer SCM Dashboard - Admin</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+      tailwind.config = {
+        darkMode: 'class', // Optional: if we want to support light/dark toggle later
+        theme: {
+          extend: {
+            colors: {
+              primary: { // Primary actions, focus rings, highlights (was blue, now amber/gold for premium dark)
+                DEFAULT: '#F59E0B', // amber-500
+                hover: '#D97706', // amber-600
+                light: '#FEF3C7', // amber-100 (for light backgrounds if needed, or hover states on dark)
+              },
+              accent: { // Secondary accents or alternative primary (can be same as primary for simplicity in this theme)
+                DEFAULT: '#F59E0B', // amber-500
+                hover: '#D97706', // amber-600
+              },
+              neutral: { // Main palette for dark theme
+                50: '#F9FAFB',  // Lightest gray for text or light mode elements
+                100: '#F3F4F6',
+                200: '#E5E7EB',
+                300: '#D1D5DB', // Light text on dark backgrounds
+                400: '#9CA3AF', // Medium-light text
+                500: '#6B7280', // Borders, subtle text
+                600: '#4B5563', // Card backgrounds (lighter dark)
+                700: '#374151', // Card backgrounds (medium dark)
+                800: '#1F2937', // Main dashboard background (dark)
+                900: '#11182C', // Header, very dark elements (deep dark)
+              },
+              // Specific semantic colors for dark theme (can be adjusted for better contrast)
+              success: {
+                DEFAULT: '#10B981', // emerald-500
+                light: '#A7F3D0',   // emerald-200
+                text: '#ECFDF5',    // emerald-50
+              },
+              warning: {
+                DEFAULT: '#FBBF24', // amber-400
+                light: '#FEF3C7',   // amber-100
+                text: '#78350F',    // amber-900 (on light bg) or white/light gray on dark bg
+              },
+              danger: {
+                DEFAULT: '#EF4444', // red-500
+                light: '#FECACA',   // red-200
+                text: '#FEE2E2',    // red-100
+              }
+            },
+            animation: {
+              modalFadeIn: 'modalFadeIn 0.3s ease-out forwards',
+              fadeIn: 'fadeIn 0.5s ease-out forwards',
+            },
+            keyframes: {
+              modalFadeIn: {
+                'from': { opacity: '0', transform: 'scale(0.95)' },
+                'to': { opacity: '1', transform: 'scale(1)' },
+              },
+              fadeIn: {
+                'from': { opacity: '0' },
+                'to': { opacity: '1' },
+              }
+            },
+            backgroundImage: {
+              'login-grad': "radial-gradient(ellipse at bottom, #11182C 0%, #1F2937 50%, #374151 100%)",
+            }
+          }
+        }
+      }
+    </script>
+  <script type="importmap">
+{
+  "imports": {
+    "react": "https://esm.sh/react@^19.1.0",
+    "react-dom/client": "https://esm.sh/react-dom@^19.1.0/client",
+    "react-dom/": "https://esm.sh/react-dom@^19.1.0/",
+    "react/": "https://esm.sh/react@^19.1.0/",
+    "@google/genai": "https://esm.sh/@google/genai@^0.15.0",
+    "recharts": "https://esm.sh/recharts@^2.15.3"
+  }
+}
+</script>
+<style>
+  /* For custom scrollbars if needed, can be extended */
+  ::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+  }
+  ::-webkit-scrollbar-thumb {
+    background-color: #4B5563; /* neutral-600 */
+    border-radius: 4px;
+  }
+  ::-webkit-scrollbar-thumb:hover {
+    background-color: #6B7280; /* neutral-500 */
+  }
+  ::-webkit-scrollbar-track {
+    background-color: #1F2937; /* neutral-800 */
+  }
+  /* Basic body style for dark theme */
+  body {
+    background-color: #1F2937; /* neutral-800 */
+    color: #D1D5DB; /* neutral-300 */
+  }
+  
+  /* Styling for the login page body specifically */
+  body.login-page-active {
+    background-image: radial-gradient(ellipse at center, #11182C 40%, #000000 100%);
+    /* You can add more layers or SVG patterns here for a "3D" effect */
+    /* Example: background-image: url("data:image/svg+xml,..."), radial-gradient(...); */
+    background-size: cover;
+    background-repeat: no-repeat;
+    background-attachment: fixed;
+  }
+
+  /* Ensure recharts tooltips and legends are styled for dark mode */
+  .recharts-default-tooltip {
+    background-color: #374151 !important; /* neutral-700 */
+    border-color: #4B5563 !important; /* neutral-600 */
+    color: #F3F4F6 !important; /* neutral-100 */
+  }
+  .recharts-tooltip-label {
+    color: #F9FAFB !important; /* neutral-50 */
+  }
+  .recharts-legend-item-text {
+    color: #D1D5DB !important; /* neutral-300 */
+  }
+  .recharts-cartesian-axis-tick-value {
+    fill: #9CA3AF !important; /* neutral-400 */
+  }
+   .recharts-label {
+    fill: #9CA3AF !important; /* neutral-400 */
+  }
+</style>
+<link rel="stylesheet" href="/index.css">
+</head>
+  <body>
+    <div id="root"></div>
+    <!-- 
+      PRODUCTION DEPLOYMENT (e.g., Vercel):
+      This HTML file now references "/index.js".
+      The 'npm run build' script (defined in package.json) will:
+      1. Use 'esbuild' to transpile "index.tsx" into "build_output/index.js".
+      2. Copy this "index.html" into "build_output/index.html".
+      
+      Vercel Deployment Configuration (vercel.json and Project Settings):
+      - The 'vercel.json' file configures Vercel to use '@vercel/static-build'.
+      - This builder runs 'npm run build' (or your specified build command).
+      - It then expects the output in the directory specified by 'distDir' in vercel.json 
+        (which is set to 'build_output').
+      - In Vercel Project Settings:
+        - Framework Preset: Other
+        - Build Command: npm run build (or npm run vercel-build)
+        - Output Directory: build_output
+    -->
+    <script type="module" src="/index.js"></script>
+  <script type="module" src="/index.tsx"></script>
+</body>
+</html>

@@ -1,0 +1,6 @@
+{
+  "name": "Bonhoeffer SCM Dashboard",
+  "description": "A dashboard for Bonhoeffer Machines to manage Supply Chain Management operations, track orders, supplier performance, payments, and get AI-powered insights.",
+  "requestFramePermissions": [],
+  "prompt": ""
+}
