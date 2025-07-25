@@ -1,4 +1,5 @@
 
+
 import React from 'react';
 import { Order } from '../types';
 import { DownloadIcon } from './icons/DashboardIcons';
@@ -28,7 +29,10 @@ const PaymentTracker: React.FC<PaymentTrackerProps> = ({ orders }) => {
   const exportToCSV = () => {
     const headers = ['Order ID', 'Client Name', 'Total Client Price ($)', 'Total Paid by Client ($)', 'Remaining Balance ($)', 'Payment Status', 'Expected Final Payment Date'];
     const rows = paymentOrders.map(order => {
-        const totalPaidByClient = order.clientPayments.reduce((sum, p) => sum + p.amountPaid, 0);
+        let totalPaidByClient = order.clientPayments.reduce((sum, p) => sum + p.amountPaid, 0);
+        if (order.paymentStatus === 'Paid') {
+            totalPaidByClient = order.totalFinalPrice;
+        }
         const remainingBalance = order.totalFinalPrice - totalPaidByClient;
         return [
             order.id,
@@ -81,9 +85,15 @@ const PaymentTracker: React.FC<PaymentTrackerProps> = ({ orders }) => {
           </thead>
           <tbody className="bg-neutral-700 divide-y divide-neutral-600">
             {paymentOrders.map((order) => {
-              const totalPaidByClient = order.clientPayments.reduce((sum, p) => sum + p.amountPaid, 0);
-              const remainingBalance = order.totalFinalPrice - totalPaidByClient;
-              // Dark theme friendly status colors
+              let totalPaidByClient = order.clientPayments.reduce((sum, p) => sum + p.amountPaid, 0);
+              let remainingBalance = order.totalFinalPrice - totalPaidByClient;
+
+              // If status is 'Paid', ensure total paid reflects the full amount, even if payments array is empty from data import.
+              if (order.paymentStatus === 'Paid') {
+                totalPaidByClient = order.totalFinalPrice;
+                remainingBalance = 0;
+              }
+
               let statusColorClass = 'bg-yellow-500/20 text-yellow-300 border border-yellow-500/40'; // Pending
               if (order.paymentStatus === 'Paid') statusColorClass = 'bg-green-500/20 text-green-300 border border-green-500/40';
               else if (order.paymentStatus === 'Overdue') statusColorClass = 'bg-red-500/20 text-red-300 border border-red-500/40';
