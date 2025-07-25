@@ -59,8 +59,13 @@ const OrderDrillDownModal: React.FC<OrderDrillDownModalProps> = ({ order, suppli
 
   const totalProductionTime = daysBetween(productionStartDate, readyDate);
 
-  const totalPaidByClient = order.clientPayments.reduce((sum, p) => sum + p.amountPaid, 0);
-  const remainingBalanceClient = order.totalFinalPrice - totalPaidByClient;
+  // If status is 'Paid', ensure total paid reflects the full amount, even if payments array is empty from data import.
+  let totalPaidByClient = order.clientPayments.reduce((sum, p) => sum + p.amountPaid, 0);
+  let remainingBalanceClient = order.totalFinalPrice - totalPaidByClient;
+  if (order.paymentStatus === 'Paid') {
+    totalPaidByClient = order.totalFinalPrice;
+    remainingBalanceClient = 0;
+  }
 
   const getStageStatusIcon = (stageDate?: string, isDelayed?: boolean) => {
     if (isOrderCancelled && stageDate) return <MinusCircleIcon className="text-neutral-500" />;
