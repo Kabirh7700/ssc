@@ -74,7 +74,15 @@ const calculateKPIs = (
   allTimeDeliveredOrders.forEach(order => {
     totalItemsSoldFromDelivered += order.totalQuantity;
     totalClientValueFromDelivered += order.totalFinalPrice;
-    order.clientPayments.forEach(p => totalCollectedFromDelivered += p.amountPaid);
+    
+    if (order.paymentStatus === 'Paid') {
+      // If the order is marked as 'Paid', the collected amount is the full price,
+      // aligning with the logic in other UI components.
+      totalCollectedFromDelivered += order.totalFinalPrice;
+    } else {
+      // For other statuses (like 'Partially Paid'), sum up the actual recorded payments.
+      totalCollectedFromDelivered += order.clientPayments.reduce((sum, payment) => sum + payment.amountPaid, 0);
+    }
   });
 
   const overallDelayedOrdersCount = allOrdersInCurrentMode.filter(o => {
